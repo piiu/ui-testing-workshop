@@ -3,5 +3,12 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "jsx": "react",
+    "types": ["@testing-library/jest-dom/vitest"],
+    "target": "es6",
+    "module": "commonjs"
+  },
+  "include": ["src", "tests"]
 }

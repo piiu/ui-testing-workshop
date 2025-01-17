@@ -8,7 +8,7 @@ interface LoaderProps {
 
 const Loader = ({isLoading, children}: LoaderProps): ReactNode => {
     if (isLoading) {
-        return <Box p={5} display="flex" justifyContent="space-around"><CircularProgress /></Box>
+        return <Box p={5} display="flex" justifyContent="space-around" title="Loading"><CircularProgress /></Box>
     }
 
     return children

@@ -1,8 +1,8 @@
 import {Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import {Cancel, Save} from "@mui/icons-material";
-import {CreatePost} from "../api/dummyjson.ts";
-import {useFormik} from "formik";
 import * as Yup from "yup";
+import {CreatePost} from "../types.ts";
+import {useFormik} from "formik";
 
 interface NewPostDialogProps {
     isOpen: boolean;

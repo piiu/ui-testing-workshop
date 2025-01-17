@@ -1,12 +1,12 @@
-import {Post} from "../api/dummyjson.ts";
 import {Box, Chip, IconButton, Typography} from "@mui/material";
 import {ThumbDown, ThumbUp} from "@mui/icons-material";
+import {Post} from "../types.ts";
 
-interface PostCardProps {
+interface PostListItemProps {
     post: Post
 }
 
-const PostCard = ({post}: PostCardProps) => {
+const PostListItem = ({post}: PostListItemProps) => {
     return (
         <Box mb={2}>
             <Typography variant="h6">{post.title}</Typography>
@@ -30,4 +30,4 @@ const PostCard = ({post}: PostCardProps) => {
     )
 }
 
-export default PostCard
+export default PostListItem

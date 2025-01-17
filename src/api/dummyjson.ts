@@ -1,3 +1,5 @@
+import {CreatePost, Post} from "../types.ts";
+
 export const fetchPosts = async (): Promise<Post[]> => {
     return fetch('https://dummyjson.com/posts')
         .then(res => res.json())
@@ -17,19 +19,3 @@ export const createPost  = async (post: CreatePost): Promise<Post> => {
 
 }
 
-export interface Post {
-    id: number;
-    title: string;
-    body: string;
-    tags: string[];
-    reactions?: {
-        likes: number;
-        dislikes: number;
-    };
-}
-
-export interface CreatePost {
-    title: string;
-    body: string;
-    tags: string[];
-}

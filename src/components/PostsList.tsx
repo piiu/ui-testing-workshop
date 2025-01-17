@@ -1,10 +1,11 @@
 import {useEffect, useMemo, useState} from "react";
 import Loader from "./Loader.tsx";
-import {createPost, CreatePost, fetchPosts, Post} from "../api/dummyjson.ts";
-import PostCard from "./PostCard.tsx";
+import {createPost, fetchPosts} from "../api/dummyjson.ts";
+import PostListItem from "./PostListItem.tsx";
 import {Box, Button, Typography} from "@mui/material";
 import {Add} from "@mui/icons-material";
 import NewPostDialog from "./NewPostDialog.tsx";
+import {CreatePost, Post} from "../types.ts";
 
 const PostsList = () => {
     const [posts, setPosts] = useState<Post[]|undefined>(undefined)
@@ -25,6 +26,7 @@ const PostsList = () => {
                         : [post]
                 )
             })
+            .catch(console.error)
             .finally(() => {
                 closeAddPostDialog()
             })
@@ -35,21 +37,24 @@ const PostsList = () => {
     }, [posts]);
 
     return (
-        <Loader isLoading={!posts}>
+        <>
+
             <Box display="flex" justifyContent="space-between" alignItems="flex-end">
                 <Typography variant="h4" component="h2">Posts</Typography>
                 <Button onClick={openAddPostDialog} startIcon={<Add />}>Add post</Button>
             </Box>
-            <Box>
-                {posts?.map((post) => <PostCard key={post.id} post={post} />)}
-            </Box>
+            <Loader isLoading={!posts}>
+                <Box>
+                    {posts?.map((post) => <PostListItem key={post.id} post={post} />)}
+                </Box>
+            </Loader>
             <NewPostDialog
                 isOpen={addPostDialogOpen}
                 handleClose={closeAddPostDialog}
                 handleSave={savePost}
                 existingTags={Array.from(tags)}
             />
-        </Loader>
+        </>
     )
 }
 
