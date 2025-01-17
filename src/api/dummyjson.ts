@@ -1,0 +1,35 @@
+export const fetchPosts = async (): Promise<Post[]> => {
+    return fetch('https://dummyjson.com/posts')
+        .then(res => res.json())
+        .then(data => data.posts)
+}
+
+export const createPost  = async (post: CreatePost): Promise<Post> => {
+    return fetch('https://dummyjson.com/posts/add', {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            ...post,
+            userId: 1,
+        })
+    })
+        .then(res => res.json())
+
+}
+
+export interface Post {
+    id: number;
+    title: string;
+    body: string;
+    tags: string[];
+    reactions?: {
+        likes: number;
+        dislikes: number;
+    };
+}
+
+export interface CreatePost {
+    title: string;
+    body: string;
+    tags: string[];
+}
