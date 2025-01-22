@@ -7,7 +7,7 @@ npm install
 
 ### Run dev environment
 ```
-npm start
+npm run dev
 ```
 
 ### Run tests
