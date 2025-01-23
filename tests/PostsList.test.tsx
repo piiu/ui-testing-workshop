@@ -67,8 +67,10 @@ describe('PostsList', () => {
         expect(screen.getByRole('searchbox')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Search/i })).toBeInTheDocument();
 
-        expect(screen.queryByText(/Filtered post/i)).toBeInTheDocument()
-        expect(screen.queryByText(/Existing post/i)).toBeInTheDocument()
+        await waitFor(() => {
+            expect(screen.queryByText(/Filtered post/i)).toBeInTheDocument()
+            expect(screen.queryByText(/Existing post/i)).toBeInTheDocument()
+        })
 
         await userEvent.type(screen.getByRole('searchbox'), 'Filtered')
         await userEvent.click(screen.getByRole('button', { name: /Search/i }))
