@@ -19,8 +19,8 @@ const NewPostDialog = ({isOpen, handleClose, handleSave, existingTags}: NewPostD
             tags: [],
         },
         validationSchema: Yup.object({
-            title: Yup.string().min(15).max(255).required(),
-            body: Yup.string().min(100).max(2500).required(),
+            title: Yup.string().min(1).max(255).required(),
+            body: Yup.string().min(1).max(2500).required(),
             tags: Yup.array().min(1).max(5).required(),
         }),
         onSubmit: handleSave,
