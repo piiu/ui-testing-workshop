@@ -15,6 +15,12 @@ describe('PostsList', () => {
                 title: 'Existing post',
                 body: 'with some text',
                 tags: ['tag1'],
+            },
+            {
+                id: 124,
+                title: 'Filtered post',
+                body: 'with some other text',
+                tags: ['tag2'],
             }
         ])
         vi.mocked(createPost).mockImplementation(
@@ -53,5 +59,19 @@ describe('PostsList', () => {
         )
 
         expect(screen.queryAllByText('tag1').length).toBe(2)
+    })
+
+    it('filters posts', async () => {
+        render(<PostsList />);
+
+        expect(screen.getByRole('searchbox')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Search/i })).toBeInTheDocument();
+
+        await userEvent.type(screen.getByRole('searchbox'), 'Filtered')
+        await userEvent.click(screen.getByRole('button', { name: /Search/i }))
+
+        await waitFor(() => {
+            expect(screen.queryByText(/Existing post/i)).not.toBeInTheDocument()
+        })
     })
 })
