@@ -21,9 +21,6 @@ describe('PostsList', () => {
         vi.mocked(createPost).mockImplementation(
             (post) => Promise.resolve({id: 234, ...post})
         )
-        vi.mocked(addLikeToPost).mockImplementation(
-            (post) => Promise.resolve({id: 234, ...post})
-        )
     })
 
     it('calls API to create post and adds the result to the posts list', async () => {
@@ -60,6 +57,10 @@ describe('PostsList', () => {
     })
 
     it('calls to like calls backend and changes count', async () => {
+        vi.mocked(addLikeToPost).mockImplementation(
+            (post) => Promise.resolve({id: 234, ...post})
+        )
+
         render(<PostListItem post2={{
             id: 123,
             title: 'Existing post',
@@ -81,6 +82,23 @@ describe('PostsList', () => {
         await userEvent.click(likeButton)
 
         expect(likeCount).toHaveTextContent('5')
+        expect(addLikeToPost).toHaveBeenCalledOnce()
+    })
+
+    it('calls to like calls backend fails and does not change count', async () => {
+        vi.mocked(addLikeToPost).mockRejectedValue(
+            (post) => Promise.resolve({id: 234, ...post})
+        )
+
+        render(<PostListItem post2={{
+            id: 123,
+            title: 'Existing post',
+            body: 'with some text',
+            tags: ['tag1']
+        }} />);
+
+        await userEvent.click(screen.getByRole('button', {name: 'Like Existing post'}))
+        expect(screen.getByTitle('likes')).toHaveTextContent('0')
         expect(addLikeToPost).toHaveBeenCalledOnce()
     })
 })
