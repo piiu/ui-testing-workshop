@@ -44,7 +44,7 @@ const PostsList = () => {
         if (!q || q === '') {
             setFilteredPosts(posts);
         }
-        const filtered = posts?.filter(post => post.title.includes(q));
+        const filtered = posts?.filter(post => post.title.toLowerCase().includes(q.toLowerCase()));
         setFilteredPosts(filtered);
     }
 
