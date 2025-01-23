@@ -1,9 +1,10 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {render, screen, waitFor} from "@testing-library/react";
-import {createPost, fetchPosts} from "../src/api/dummyjson";
+import {render, screen, waitFor, within} from "@testing-library/react";
+import {addLikeToPost, createPost, fetchPosts} from "../src/api/dummyjson";
 import * as React from "react";
 import PostsList from "../src/components/PostsList";
 import {userEvent} from "@testing-library/user-event";
+import PostListItem from "../src/components/PostListItem";
 
 vi.mock('../src/api/dummyjson.ts')
 
@@ -18,6 +19,9 @@ describe('PostsList', () => {
             }
         ])
         vi.mocked(createPost).mockImplementation(
+            (post) => Promise.resolve({id: 234, ...post})
+        )
+        vi.mocked(addLikeToPost).mockImplementation(
             (post) => Promise.resolve({id: 234, ...post})
         )
     })
@@ -53,5 +57,30 @@ describe('PostsList', () => {
         )
 
         expect(screen.queryAllByText('tag1').length).toBe(2)
+    })
+
+    it('calls to like calls backend and changes count', async () => {
+        render(<PostListItem post2={{
+            id: 123,
+            title: 'Existing post',
+            body: 'with some text',
+            tags: ['tag1'],
+            reactions: {
+                likes: 4,
+                dislikes: 0
+            }
+        }} />);
+
+        const likeButton = screen.getByRole('button', {name: 'Like Existing post'})
+        const likeCount = screen.getByTitle('likes')
+
+        expect(likeButton).toBeInTheDocument()
+        expect(likeCount).toBeInTheDocument()
+        expect(likeCount).toHaveTextContent('4')
+
+        await userEvent.click(likeButton)
+
+        expect(likeCount).toHaveTextContent('5')
+        expect(addLikeToPost).toHaveBeenCalledOnce()
     })
 })

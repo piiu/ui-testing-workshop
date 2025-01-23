@@ -45,7 +45,7 @@ const PostsList = () => {
             </Box>
             <Loader isLoading={!posts}>
                 <Box>
-                    {posts?.map((post) => <PostListItem key={post.id} post={post} />)}
+                    {posts?.map((post) => <PostListItem key={post.id} post2={post} />)}
                 </Box>
             </Loader>
             <NewPostDialog
