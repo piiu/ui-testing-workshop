@@ -2,17 +2,22 @@ import {useEffect, useMemo, useState} from "react";
 import Loader from "./Loader.tsx";
 import {createPost, fetchPosts} from "../api/dummyjson.ts";
 import PostListItem from "./PostListItem.tsx";
-import {Box, Button, Typography} from "@mui/material";
-import {Add} from "@mui/icons-material";
+import {Box, Button, Input, Typography} from "@mui/material";
+import {Add, Search} from "@mui/icons-material";
 import NewPostDialog from "./NewPostDialog.tsx";
 import {CreatePost, Post} from "../types.ts";
 
 const PostsList = () => {
-    const [posts, setPosts] = useState<Post[]|undefined>(undefined)
+    const [filteredPosts, setFilteredPosts] = useState<Post[]|undefined>(undefined)
+    const [allPosts, setAllPosts] = useState<Post[]|undefined>(undefined)
     const [addPostDialogOpen, setAddPostDialogOpen] = useState(false)
+    const [query, setQuery] = useState<string>('')
 
     useEffect(() => {
-        fetchPosts().then(setPosts)
+        fetchPosts().then(r => {
+            setAllPosts(r);
+            filterPosts('', r);
+        })
     }, [])
 
     const openAddPostDialog = () => setAddPostDialogOpen(true)
@@ -20,11 +25,10 @@ const PostsList = () => {
     const savePost = (post: CreatePost) => {
         createPost(post)
             .then(post => {
-                setPosts(
-                    (prevState) => prevState
-                        ? [post, ...prevState]
-                        : [post]
-                )
+                const posts = [post, ...allPosts!!];
+                setAllPosts(posts);
+                setQuery('');
+                filterPosts('', posts);
             })
             .catch(console.error)
             .finally(() => {
@@ -33,8 +37,16 @@ const PostsList = () => {
     }
 
     const tags = useMemo(() => {
-        return new Set(posts?.flatMap((post) => post.tags))
-    }, [posts]);
+        return new Set(allPosts?.flatMap((post) => post.tags))
+    }, [allPosts]);
+
+    const filterPosts = (q: string, posts: Post[]) => {
+        if (!q || q === '') {
+            setFilteredPosts(posts);
+        }
+        const filtered = posts?.filter(post => post.title.toLowerCase().includes(q.toLowerCase()));
+        setFilteredPosts(filtered);
+    }
 
     return (
         <>
@@ -43,9 +55,19 @@ const PostsList = () => {
                 <Typography variant="h4" component="h2">Posts</Typography>
                 <Button onClick={openAddPostDialog} startIcon={<Add />}>Add post</Button>
             </Box>
-            <Loader isLoading={!posts}>
+            <Box>
+                <Input
+                    value={query}
+                    onInput={(event: any) => setQuery(event.target.value)}
+                    role={'searchbox'}
+                />
+                <Button onClick={() => filterPosts(query, allPosts!!)}>
+                    Search <Search />
+                </Button>
+            </Box>
+            <Loader isLoading={!allPosts}>
                 <Box>
-                    {posts?.map((post) => <PostListItem key={post.id} post2={post} />)}
+                    {filteredPosts?.map((post) => <PostListItem key={post.id} post2={post} />)}
                 </Box>
             </Loader>
             <NewPostDialog

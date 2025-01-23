@@ -16,6 +16,12 @@ describe('PostsList', () => {
                 title: 'Existing post',
                 body: 'with some text',
                 tags: ['tag1'],
+            },
+            {
+                id: 124,
+                title: 'Filtered post',
+                body: 'with some other text',
+                tags: ['tag2'],
             }
         ])
         vi.mocked(createPost).mockImplementation(
@@ -100,5 +106,25 @@ describe('PostsList', () => {
         await userEvent.click(screen.getByRole('button', {name: 'Like Existing post'}))
         expect(screen.getByTitle('likes')).toHaveTextContent('0')
         expect(addLikeToPost).toHaveBeenCalledOnce()
+    })
+
+    it('filters posts', async () => {
+        render(<PostsList />);
+
+        expect(screen.getByRole('searchbox')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Search/i })).toBeInTheDocument();
+
+        await waitFor(() => {
+            expect(screen.queryByText(/Filtered post/i)).toBeInTheDocument()
+            expect(screen.queryByText(/Existing post/i)).toBeInTheDocument()
+        })
+
+        await userEvent.type(screen.getByRole('searchbox'), 'Filtered')
+        await userEvent.click(screen.getByRole('button', { name: /Search/i }))
+
+        await waitFor(() => {
+            expect(screen.queryByText(/Existing post/i)).not.toBeInTheDocument()
+            expect(screen.queryByText(/Filtered post/i)).toBeInTheDocument()
+        })
     })
 })

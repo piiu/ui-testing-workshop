@@ -6,4 +6,5 @@ import '@testing-library/jest-dom/vitest'
 afterEach(() => {
     vi.resetAllMocks()
     cleanup();
+    vi.resetAllMocks();
 });
